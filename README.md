@@ -1,5 +1,4 @@
 # Instagram Thrift Store — ER Diagram
-### Web Dev Cohort 2026 · Databases Assignment
 
 ---
 
@@ -9,8 +8,8 @@ This repository contains the database design (Entity–Relationship Diagram) for
 
 | File | Description |
 |---|---|
-| `erd_explained.html` | Full interactive HTML page with the ER diagram, legend, entity walkthrough, and business Q&A |
-| `erd_diagram.png` | Exported image of the ER diagram (attach your screenshot here) |
+| `index.html` | Full interactive HTML page with the ER diagram, legend, entity walkthrough, and business Q&A |
+| `instagram_thrift_erd.png` | Exported image of the ER diagram (attach your screenshot here) |
 | `README.md` | This file |
 
 ---
