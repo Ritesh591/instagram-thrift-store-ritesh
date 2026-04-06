@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Instagram Thrift Store — ER Diagram</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #1a1a1a;
+    background: #fff;
+    padding: 40px 24px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+
+  h1 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: #111;
+  }
+
+  .erd-wrapper {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 24px 16px;
+    overflow-x: auto;
+    background: #fafafa;
+  }
+  #erd svg { width: 100%; height: auto; }
+
+  .legend-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    position: relative;
+  }
+  .legend-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid #ccc;
+    background: white;
+    color: #555;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .legend-btn:hover { background: #f0f0f0; }
+  .legend-btn .tooltip {
+    display: none;
+    position: absolute;
+    right: 34px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #333;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 400;
+    white-space: nowrap;
+    padding: 4px 10px;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+  .legend-btn:hover .tooltip { display: block; }
+
+  dialog {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 28px 32px;
+    max-width: 480px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  }
+  dialog::backdrop { background: rgba(0,0,0,0.35); }
+  dialog h2 { font-size: 1rem; font-weight: 600; margin-bottom: 16px; color: #111; }
+  .close-btn {
+    float: right;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #888;
+    line-height: 1;
+    margin-top: -2px;
+  }
+  .legend-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; }
+  .legend-table th {
+    text-align: left;
+    padding: 6px 10px;
+    background: #f5f5f5;
+    border-bottom: 1px solid #e0e0e0;
+    font-weight: 600;
+    color: #333;
+  }
+  .legend-table td {
+    padding: 7px 10px;
+    border-bottom: 1px solid #f0f0f0;
+    vertical-align: top;
+    color: #444;
+  }
+  .legend-table tr:last-child td { border-bottom: none; }
+  .mono { font-family: monospace; font-size: 12px; background: #f0f0f0; padding: 1px 5px; border-radius: 3px; }
+
+  .divider { height: 1px; background: #e8e8e8; margin: 52px 0; }
+
+  .entity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .entity-card { border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden; }
+  .entity-card-head {
+    padding: 11px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .entity-card-name { font-size: 0.9rem; font-weight: 700; }
+  .entity-card-type {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 100px;
+    border: 1px solid currentColor;
+    opacity: 0.7;
+  }
+  .entity-card-body { padding: 14px 16px; background: white; }
+  .entity-card-desc { font-size: 0.875rem; color: #555; margin-bottom: 12px; line-height: 1.55; }
+  .attr-list { list-style: none; }
+  .attr-list li {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: #666;
+    padding: 3px 0;
+    border-bottom: 1px dashed #eee;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .attr-list li:last-child { border-bottom: none; }
+  .badge-pk { font-size: 8px; padding: 1px 5px; border-radius: 3px; background: #c4522a; color: white; font-weight: 600; flex-shrink: 0; }
+  .badge-fk { font-size: 8px; padding: 1px 5px; border-radius: 3px; background: #2a7c6b; color: white; font-weight: 600; flex-shrink: 0; }
+
+  .head-orange { background: #fdf0ea; color: #8a3516; }
+  .head-teal   { background: #d0ede8; color: #1a5c4f; }
+  .head-purple { background: #e8e4f5; color: #3d2f6e; }
+  .head-gold   { background: #f5edcc; color: #6b4e00; }
+  .head-muted  { background: #f0f0f0; color: #444; }
+
+  .qa-list { margin-top: 28px; }
+  .qa-item {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 16px;
+    padding: 20px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .qa-item:last-child { border-bottom: none; }
+  .qa-num { font-size: 1.1rem; font-weight: 700; color: #ccc; padding-top: 2px; }
+  .qa-q { font-weight: 600; color: #111; margin-bottom: 6px; font-size: 0.97rem; }
+  .qa-a { font-size: 0.93rem; color: #444; line-height: 1.7; }
+
+  h2.section-title { font-size: 1.1rem; font-weight: 600; color: #111; }
+</style>
+</head>
+<body>
+
+<h1>Instagram Thrift Store — ER Diagram</h1>
+
+<div class="erd-wrapper">
+  <div id="erd"></div>
+</div>
+
+<div class="legend-row">
+  <button class="legend-btn" onclick="document.getElementById('legend-dialog').showModal()">
+    ?
+    <span class="tooltip">Diagram legend</span>
+  </button>
+</div>
+
+<dialog id="legend-dialog">
+  <button class="close-btn" onclick="document.getElementById('legend-dialog').close()">&#x2715;</button>
+  <h2>Diagram Legend</h2>
+  <table class="legend-table">
+    <thead>
+      <tr><th>Symbol / Term</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><span class="mono">PK</span></td><td>Primary Key — unique ID for each row in this table</td></tr>
+      <tr><td><span class="mono">FK</span></td><td>Foreign Key — references the PK of another table</td></tr>
+      <tr><td><span class="mono">||--||</span></td><td>Exactly one to exactly one</td></tr>
+      <tr><td><span class="mono">||--o{</span></td><td>One to zero or many</td></tr>
+      <tr><td><span class="mono">||--|{</span></td><td>One to one or many (at least one required)</td></tr>
+      <tr><td><span class="mono">||--o|</span></td><td>One to zero or one (optional)</td></tr>
+      <tr><td>Rectangle</td><td>Entity — becomes a table in the database</td></tr>
+      <tr><td>Junction table</td><td>Resolves a many-to-many relationship (e.g. ORDER_ITEM)</td></tr>
+    </tbody>
+  </table>
+</dialog>
+
+<div class="divider"></div>
+
+<h2 class="section-title">What Each Table Does</h2>
+
+<div class="entity-grid">
+
+  <div class="entity-card">
+    <div class="entity-card-head head-teal">
+      <span class="entity-card-name">Customer</span>
+      <span class="entity-card-type">Core</span>
+    </div>
+    <div class="entity-card-body">
+      <p class="entity-card-desc">Stores everyone who has placed or may place an order. Since the store runs on Instagram, the <em>instagram_handle</em> field is essential for communication.</p>
+      <ul class="attr-list">
+        <li><span class="badge-pk">PK</span> customer_id</li>
+        <li>full_name</li>
+        <li>phone</li>
+        <li>email</li>
+        <li>instagram_handle</li>
+        <li>address</li>
+        <li>created_at</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card">
+    <div class="entity-card-head head-orange">
+      <span class="entity-card-name">Product</span>
+      <span class="entity-card-type">Core</span>
+    </div>
+    <div class="entity-card-body">
+      <p class="entity-card-desc">The master catalog entry for any item sold. Holds fields common to <em>both</em> thrift and handmade items. Product-type-specific details live in sub-tables.</p>
+      <ul class="attr-list">
+        <li><span class="badge-pk">PK</span> product_id</li>
+        <li>name</li>
+        <li>description</li>
+        <li>product_type <span style="color:#999; font-size:0.75em">(thrift / handmade)</span></li>
+        <li>price</li>
+        <li>category</li>
+        <li>created_at</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card">
+    <div class="entity-card-head head-muted">
+      <span class="entity-card-name">Thrift_Item</span>
+      <span class="entity-card-type">Sub-type</span>
+    </div>
+    <div class="entity-card-body">
+      <p class="entity-card-desc">Extends <strong>Product</strong> with details specific to second-hand items. The <em>is_sold</em> boolean is critical — thrift pieces are unique; once sold, the item is gone.</p>
+      <ul class="attr-list">
+        <li><span class="badge-pk">PK</span> thrift_item_id</li>
+        <li><span class="badge-fk">FK</span> product_id</li>
+        <li>condition</li>
+        <li>size</li>
+        <li>color</li>
+        <li>brand</li>
+        <li>is_sold</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card">
+    <div class="entity-card-head head-muted">
+      <span class="entity-card-name">Handmade_Item</span>
+      <span class="entity-card-type">Sub-type</span>
+    </div>
+    <div class="entity-card-body">
+      <p class="entity-card-desc">Extends <strong>Product</strong> for items the creator makes in batches. Tracks <em>quantity_available</em> — unlike thrift items, multiple units can exist.</p>
+      <ul class="attr-list">
+        <li><span class="badge-pk">PK</span> handmade_item_id</li>
+        <li><span class="badge-fk">FK</span> product_id</li>
+        <li>size</li>
+        <li>color</li>
+        <li>material</li>
+        <li>quantity_available</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card">
+    <div class="entity-card-head head-purple">
+      <span class="entity-card-name">Order</span>
+      <span class="entity-card-type">Transaction</span>
+    </div>
+    <div class="entity-card-body">
+      <p class="entity-card-desc">Represents a single purchase event by a customer. Tracks when it was placed, overall status, and total amount.</p>
+      <ul class="attr-list">
+        <li><span class="badge-pk">PK</span> order_id</li>
+        <li><span class="badge-fk">FK</span> customer_id</li>
+        <li>order_date</li>
+        <li>order_status</li>
+        <li>total_amount</li>
+        <li>notes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card">
+    <div class="entity-card-head head-purple">
+      <span class="entity-card-name">Order_Item</span>
+      <span class="entity-card-type">Junction</span>
+    </div>
+    <div class="entity-card-body">
+      <p class="entity-card-desc">The bridge table linking Orders to Products. Stores which products were in which order, quantity, and price at time of purchase.</p>
+      <ul class="attr-list">
+        <li><span class="badge-pk">PK</span> order_item_id</li>
+        <li><span class="badge-fk">FK</span> order_id</li>
+        <li><span class="badge-fk">FK</span> product_id</li>
+        <li>quantity</li>
+        <li>unit_price</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card">
+    <div class="entity-card-head head-gold">
+      <span class="entity-card-name">Payment</span>
+      <span class="entity-card-type">Financial</span>
+    </div>
+    <div class="entity-card-body">
+      <p class="entity-card-desc">Tracks payment for a specific order. Records method, status, and a reference ID for reconciliation.</p>
+      <ul class="attr-list">
+        <li><span class="badge-pk">PK</span> payment_id</li>
+        <li><span class="badge-fk">FK</span> order_id</li>
+        <li>amount_paid</li>
+        <li>payment_method</li>
+        <li>payment_status</li>
+        <li>transaction_ref</li>
+        <li>paid_at</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="entity-card">
+    <div class="entity-card-head head-teal">
+      <span class="entity-card-name">Shipping</span>
+      <span class="entity-card-type">Logistics</span>
+    </div>
+    <div class="entity-card-body">
+      <p class="entity-card-desc">Tracks where the order is going and its delivery status. Records courier, tracking number, and timestamps for dispatch and delivery.</p>
+      <ul class="attr-list">
+        <li><span class="badge-pk">PK</span> shipping_id</li>
+        <li><span class="badge-fk">FK</span> order_id</li>
+        <li>recipient_name</li>
+        <li>shipping_address</li>
+        <li>shipping_status</li>
+        <li>courier</li>
+        <li>tracking_number</li>
+        <li>shipped_at</li>
+        <li>delivered_at</li>
+      </ul>
+    </div>
+  </div>
+
+</div>
+
+<div class="divider"></div>
+
+<h2 class="section-title">How This Diagram Answers the Real Questions</h2>
+
+<div class="qa-list">
+
+  <div class="qa-item">
+    <div class="qa-num">1</div>
+    <div>
+      <p class="qa-q">What products are being sold?</p>
+      <p class="qa-a">The <span class="mono">PRODUCT</span> table is the central catalog. Every item has a row here with its name, description, category, and price.</p>
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-num">2</div>
+    <div>
+      <p class="qa-q">Are they thrifted items or handmade items?</p>
+      <p class="qa-a"><span class="mono">PRODUCT.product_type</span> flags each item as <em>"thrift"</em> or <em>"handmade"</em>. Beyond that, two sub-type tables — <span class="mono">THRIFT_ITEM</span> and <span class="mono">HANDMADE_ITEM</span> — each linked to a product row via FK, hold all type-specific details cleanly and separately.</p>
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-num">3</div>
+    <div>
+      <p class="qa-q">How many pieces are available?</p>
+      <p class="qa-a">For handmade items: <span class="mono">HANDMADE_ITEM.quantity_available</span> tracks stock count. For thrift items: <span class="mono">THRIFT_ITEM.is_sold</span> is a boolean — thrift pieces are unique, so availability is either true or false.</p>
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-num">4</div>
+    <div>
+      <p class="qa-q">Which customer placed which order?</p>
+      <p class="qa-a"><span class="mono">ORDER.customer_id</span> is a foreign key pointing to the <span class="mono">CUSTOMER</span> table. Joining these two on that field tells you exactly who placed any order, including their name and Instagram handle.</p>
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-num">5</div>
+    <div>
+      <p class="qa-q">What all items were part of one order?</p>
+      <p class="qa-a">The <span class="mono">ORDER_ITEM</span> junction table links orders to products. Each row holds one <span class="mono">order_id</span> and one <span class="mono">product_id</span>. Filter by order ID to get all products in that order. <span class="mono">unit_price</span> is stored per row, so the price at time of purchase is preserved even if the product price changes later.</p>
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-num">6</div>
+    <div>
+      <p class="qa-q">Was the order paid for?</p>
+      <p class="qa-a"><span class="mono">PAYMENT.payment_status</span> answers this directly — values like <em>pending</em>, <em>paid</em>, or <em>failed</em>. The table also records method (UPI, bank transfer, cash, etc.) and a transaction reference for verification.</p>
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-num">7</div>
+    <div>
+      <p class="qa-q">Has the order been shipped or delivered?</p>
+      <p class="qa-a"><span class="mono">SHIPPING.shipping_status</span> tracks the stage — preparing, shipped, out for delivery, delivered. <span class="mono">shipped_at</span> and <span class="mono">delivered_at</span> give exact timestamps. Payment and shipping are kept as separate tables so each can be updated independently.</p>
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-num">8</div>
+    <div>
+      <p class="qa-q">Can one customer place multiple orders?</p>
+      <p class="qa-a">Yes. The relationship between <span class="mono">CUSTOMER</span> and <span class="mono">ORDER</span> is one-to-many (<span class="mono">||--o{</span>). One customer record can link to many order records through <span class="mono">ORDER.customer_id</span>.</p>
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-num">9</div>
+    <div>
+      <p class="qa-q">Can one order contain multiple products?</p>
+      <p class="qa-a">Yes. This is a many-to-many relationship between <span class="mono">ORDER</span> and <span class="mono">PRODUCT</span>, resolved by the <span class="mono">ORDER_ITEM</span> junction table. One order maps to many ORDER_ITEM rows; one product can appear across many orders.</p>
+    </div>
+  </div>
+
+  <div class="qa-item">
+    <div class="qa-num">10</div>
+    <div>
+      <p class="qa-q">How do we store product-specific details like size, category, color, condition, or price?</p>
+      <p class="qa-a">
+        Fields common to all products (price, category, name) live in <span class="mono">PRODUCT</span>.<br>
+        Thrift-only details (condition, brand, is_sold) live in <span class="mono">THRIFT_ITEM</span>.<br>
+        Handmade-only details (material, quantity_available) live in <span class="mono">HANDMADE_ITEM</span>.<br><br>
+        This split avoids null columns — a handmade item would leave <em>condition</em> and <em>is_sold</em> empty if everything were in one table, which is poor database design.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: false,
+  theme: 'base',
+  fontFamily: 'system-ui, sans-serif',
+  themeVariables: {
+    darkMode: false,
+    fontSize: '13px',
+    lineColor: '#888',
+    textColor: '#222',
+    primaryColor: '#fdf0ea',
+    primaryTextColor: '#8a3516',
+    primaryBorderColor: '#c4522a',
+    secondaryColor: '#d0ede8',
+    secondaryTextColor: '#1a5c4f',
+    secondaryBorderColor: '#2a7c6b',
+    tertiaryColor: '#f5f5f5',
+    tertiaryTextColor: '#444',
+    tertiaryBorderColor: '#ccc',
+  },
+});
+
+mermaid.render('erd-svg', `erDiagram
+  CUSTOMER {
+    int customer_id PK
+    string full_name
+    string phone
+    string email
+    string instagram_handle
+    string address
+    timestamp created_at
+  }
+  PRODUCT {
+    int product_id PK
+    string name
+    string description
+    string product_type
+    decimal price
+    string category
+    timestamp created_at
+  }
+  THRIFT_ITEM {
+    int thrift_item_id PK
+    int product_id FK
+    string condition
+    string size
+    string color
+    string brand
+    boolean is_sold
+  }
+  HANDMADE_ITEM {
+    int handmade_item_id PK
+    int product_id FK
+    string size
+    string color
+    string material
+    int quantity_available
+  }
+  ORDER {
+    int order_id PK
+    int customer_id FK
+    timestamp order_date
+    string order_status
+    decimal total_amount
+    string notes
+  }
+  ORDER_ITEM {
+    int order_item_id PK
+    int order_id FK
+    int product_id FK
+    int quantity
+    decimal unit_price
+  }
+  PAYMENT {
+    int payment_id PK
+    int order_id FK
+    decimal amount_paid
+    string payment_method
+    string payment_status
+    string transaction_ref
+    timestamp paid_at
+  }
+  SHIPPING {
+    int shipping_id PK
+    int order_id FK
+    string recipient_name
+    string shipping_address
+    string shipping_status
+    string courier
+    string tracking_number
+    timestamp shipped_at
+    timestamp delivered_at
+  }
+
+  CUSTOMER ||--o{ ORDER : places
+  ORDER ||--|{ ORDER_ITEM : contains
+  PRODUCT ||--o{ ORDER_ITEM : included_in
+  PRODUCT ||--o| THRIFT_ITEM : has_details
+  PRODUCT ||--o| HANDMADE_ITEM : has_details
+  ORDER ||--|| PAYMENT : paid_via
+  ORDER ||--|| SHIPPING : delivered_via
+`).then(({ svg }) => {
+  document.getElementById('erd').innerHTML = svg;
+});
+</script>
+</body>
+</html>
