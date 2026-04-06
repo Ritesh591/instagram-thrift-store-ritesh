@@ -42,14 +42,6 @@ The diagram models **8 entities**:
 
 ---
 
-## Diagram Preview
-
-> Replace the image below with your exported diagram screenshot.
-
-![ER Diagram](erd_diagram.png)
-
----
-
 ## Key Design Decisions
 
 ### 1. Product split into base + sub-type tables
@@ -89,20 +81,6 @@ Separating these concerns means:
 
 ---
 
-## How to View the HTML File
-
-1. Download `erd_explained.html`
-2. Open it in any modern browser (Chrome, Firefox, Edge, Safari)
-3. No internet connection needed after the page loads — the diagram renders in-browser using Mermaid.js (loaded from CDN on first open)
-
-The HTML file includes:
-- The full interactive ER diagram
-- A legend explaining Crow's Foot notation symbols
-- An entity-by-entity walkthrough with all attributes
-- 10 business questions with detailed answers mapped to the schema
-
----
-
 ## Notation Used
 
 This diagram uses **Crow's Foot notation**, the standard for ER diagrams:
@@ -117,14 +95,3 @@ This diagram uses **Crow's Foot notation**, the standard for ER diagrams:
 **PK** = Primary Key — unique identifier for each row  
 **FK** = Foreign Key — reference to the Primary Key of another table
 
----
-
-## Assignment Details
-
-- **Cohort**: Web Dev Cohort 2026
-- **Topic**: Databases
-- **Task**: Design an ER diagram for an Instagram-based thrift + handmade creator store
-- **Submission date**: April 6, 2026
-- **Tools used**: Mermaid.js (erDiagram), HTML/CSS
-
----
